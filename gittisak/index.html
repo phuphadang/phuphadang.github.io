@@ -203,7 +203,9 @@
             color: var(--text-primary);
         }
         .chatbot-popup-content a {
-            background-color: var(--accent-main); /* Prussian Blue for chatbot link/button */
+            /* This is the new styling for the corrected button */
+            display: inline-block;
+            background-color: #2563eb; /* A nice blue color */
             color: white;
             padding: 10px 15px;
             border-radius: 6px;
@@ -213,7 +215,7 @@
             transition: background-color 0.2s ease-in-out;
         }
         .chatbot-popup-content a:hover {
-            background-color: var(--bg-table-hover); /* Darker blue on hover */
+            background-color: #1d4ed8; /* Darker blue on hover */
         }
         .chatbot-popup-content .close-button {
             color: var(--text-primary);
@@ -316,29 +318,6 @@
     </style>
 </head>
 <body>
-
-    <div id="fb-root"></div>
-    <div id="fb-customer-chat"
-         class="fb-customerchat"
-         data-page_id="587089667815405"
-         data-attribution="biz_inbox"
-         data-messenger_app_id="1919191518843230">
-    </div>
-    <script>
-      window.fbAsyncInit = function() {
-        FB.init({
-          xfbml            : true,
-          version          : 'v19.0' // Use a stable version, e.g., v19.0 or later
-        });
-      };
-      (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = 'https://connect.facebook.net/th_TH/sdk/xfbml.customerchat.js'; // Use th_TH for Thai language
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-    </script>
 
     <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-50 shadow-sm instagram-header">
         <div class="container mx-auto flex items-center justify-between max-w-screen-lg">
@@ -673,13 +652,11 @@
     <div class="chatbot-widget-container flex flex-col items-end">
         <div id="chatbotPopup" class="chatbot-popup-content relative">
             <button id="closeChatbotPopup" class="close-button">&times;</button>
-            <p>สวัสดีครับ! มีอะไรให้เราช่วยไหมครับ?</p>
-            <a href="https://m.me/587089667815405" onclick="alert('ฟังก์ชันแชทบอทจะทำงานที่นี่'); return false;">
+            <p class="mb-4">สวัสดีครับ! มีอะไรให้เราช่วยไหมครับ?</p>
+            
+            <a href="https://m.me/587089667815405" target="_blank" rel="noopener noreferrer">
                 เริ่มแชท
             </a>
-            <p class="text-xs text-gray-400 mt-2">
-                (ฟังก์ชันแชทบอทจริงจะเชื่อมต่อกับระบบของคุณ)
-            </p>
         </div>
 
         <button id="chatbotButton" class="chatbot-button">
@@ -688,7 +665,6 @@
             </svg>
         </button>
     </div>
-
     <script>
         // Theme Toggle Logic
         const themeToggle = document.getElementById('themeToggle');
@@ -708,7 +684,8 @@
         }
 
         themeToggle.addEventListener('click', () => {
-            if (htmlElement.getAttribute('data-theme') === 'light') {
+            const current = htmlElement.getAttribute('data-theme');
+            if (current === 'light') {
                 htmlElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
                 themeIcon.classList.remove('fa-sun');
@@ -721,7 +698,7 @@
             }
         });
 
-        // Chatbot Logic (existing)
+        // Chatbot Widget Logic
         const chatbotButton = document.getElementById('chatbotButton');
         const chatbotPopup = document.getElementById('chatbotPopup');
         const closeChatbotPopup = document.getElementById('closeChatbotPopup');
@@ -734,128 +711,79 @@
             chatbotPopup.classList.remove('active');
         });
 
-        document.addEventListener('click', (event) => {
-            if (!chatbotButton.contains(event.target) && !chatbotPopup.contains(event.target)) {
-                chatbotPopup.classList.remove('active');
-            }
-        });
-
-        // AI Content Generator Logic
+        // AI Modal Logic (assuming you have this)
         const openAiModalButton = document.getElementById('openAiModal');
-        const aiModal = document.getElementById('aiModal');
         const closeAiModalButton = document.getElementById('closeAiModal');
-        const aiInput = document.getElementById('aiInput');
-        const generateAiContentButton = document.getElementById('generateAiContent');
-        const copyAiContentButton = document.getElementById('copyAiContent');
-        const aiOutput = document.getElementById('aiOutput');
-        const aiLoadingIndicator = document.getElementById('aiLoadingIndicator');
-        const contentTypeRadios = document.querySelectorAll('input[name="contentType"]');
+        const aiModal = document.getElementById('aiModal');
 
-        // Function to open AI modal
-        openAiModalButton.addEventListener('click', () => {
-            aiModal.classList.add('active');
-            aiInput.value = ''; // Clear previous input
-            aiOutput.textContent = ''; // Clear previous output
-            aiLoadingIndicator.classList.remove('active'); // Hide loading indicator
-        });
-
-        // Function to close AI modal
-        closeAiModalButton.addEventListener('click', () => {
-            aiModal.classList.remove('active');
-        });
-
-        // Close modal if clicked outside content
-        aiModal.addEventListener('click', (event) => {
-            if (event.target === aiModal) {
-                aiModal.classList.remove('active');
-            }
-        });
-
-        // Function to call Gemini API
-        async function generateTextWithGemini(prompt) {
-            const apiKey = ""; // API key is provided by Canvas runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            const chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-            const payload = { contents: chatHistory };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    return result.candidates[0].content.parts[0].text;
-                } else {
-                    console.error("Gemini API response structure unexpected:", result);
-                    return "ไม่สามารถสร้างข้อความได้ในขณะนี้ กรุณาลองอีกครั้ง";
-                }
-            } catch (error) {
-                console.error("Error calling Gemini API:", error);
-                return "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองอีกครั้ง";
-            }
+        if(openAiModalButton) {
+            openAiModalButton.addEventListener('click', () => {
+                aiModal.style.display = 'flex';
+            });
+        }
+        
+        if(closeAiModalButton) {
+            closeAiModalButton.addEventListener('click', () => {
+                aiModal.style.display = 'none';
+            });
         }
 
-        // Generate content button click handler
-        generateAiContentButton.addEventListener('click', async () => {
-            const description = aiInput.value.trim();
-            if (!description) {
-                aiOutput.textContent = "กรุณาใส่คำอธิบายโพสต์หรือวิดีโอของคุณ";
-                return;
-            }
-
-            let selectedContentType = 'caption';
-            for (const radio of contentTypeRadios) {
-                if (radio.checked) {
-                    selectedContentType = radio.value;
-                    break;
-                }
-            }
-
-            aiOutput.textContent = ''; // Clear previous output
-            aiLoadingIndicator.classList.add('active'); // Show loading indicator
-
-            let prompt = `สร้าง${selectedContentType}สำหรับโพสต์/วิดีโอเกี่ยวกับ: "${description}"`;
-            if (selectedContentType === 'caption') {
-                prompt += " ความยาวปานกลาง และน่าสนใจ";
-            } else { // comment
-                prompt += " ความยาวสั้นๆ และดูเป็นธรรมชาติ";
-            }
-
-            const generatedText = await generateTextWithGemini(prompt);
-            aiOutput.textContent = generatedText;
-            aiLoadingIndicator.classList.remove('active'); // Hide loading indicator
-        });
-
-        // Copy content button click handler
-        copyAiContentButton.addEventListener('click', () => {
-            const textToCopy = aiOutput.textContent;
-            if (textToCopy) {
-                // Using document.execCommand('copy') as navigator.clipboard.writeText() might not work in iframes
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                document.body.appendChild(textarea);
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    alert('คัดลอกเนื้อหาแล้ว!'); // Using alert as per instructions, but would prefer a custom message box
-                } catch (err) {
-                    console.error('Failed to copy text: ', err);
-                    alert('ไม่สามารถคัดลอกเนื้อหาได้');
-                }
-                document.body.removeChild(textarea);
-            } else {
-                alert('ไม่มีเนื้อหาให้คัดลอก');
+        // Close modal if clicking outside the content
+        window.addEventListener('click', (event) => {
+            if (event.target === aiModal) {
+                aiModal.style.display = 'none';
             }
         });
+
+        // Dummy AI content generation logic
+        const generateAiButton = document.getElementById('generateAiContent');
+        const copyAiButton = document.getElementById('copyAiContent');
+        const aiInput = document.getElementById('aiInput');
+        const aiOutput = document.getElementById('aiOutput');
+        const aiLoading = document.getElementById('aiLoadingIndicator');
+        aiLoading.style.display = 'none';
+
+        if(generateAiButton) {
+            generateAiButton.addEventListener('click', () => {
+                const contentType = document.querySelector('input[name="contentType"]:checked').value;
+                if (aiInput.value.trim() === "") {
+                    aiOutput.textContent = "กรุณาป้อนข้อมูลก่อนสร้างเนื้อหา";
+                    return;
+                }
+
+                aiLoading.style.display = 'block';
+                aiOutput.style.display = 'none';
+
+                setTimeout(() => { // Simulate API call
+                    let generatedText = "";
+                    if (contentType === "caption") {
+                        generatedText = `แคปชั่นสุดปังสำหรับ "${aiInput.value}": #ยอดนิยม #สุดปัง #ต้องลอง`;
+                    } else {
+                        generatedText = `คอมเมนต์น่าสนใจสำหรับ "${aiInput.value}": "ว้าว! น่าสนใจมากครับ"`;
+                    }
+                    aiOutput.textContent = generatedText;
+                    aiLoading.style.display = 'none';
+                    aiOutput.style.display = 'block';
+                }, 1500);
+            });
+        }
+
+        if(copyAiButton) {
+            copyAiButton.addEventListener('click', () => {
+                if (aiOutput.textContent && aiOutput.textContent !== "กรุณาป้อนข้อมูลก่อนสร้างเนื้อหา") {
+                    navigator.clipboard.writeText(aiOutput.textContent)
+                        .then(() => {
+                            copyAiButton.textContent = 'คัดลอกแล้ว!';
+                            setTimeout(() => {
+                                copyAiButton.textContent = 'คัดลอก';
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            alert('ไม่สามารถคัดลอกได้: ', err);
+                        });
+                }
+            });
+        }
     </script>
-
 </body>
 </html>
