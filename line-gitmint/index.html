@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ป๊อปอัพวิดเจ็ต LINE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh; /* Ensure body takes full viewport height for fixed positioning */
+            position: relative; /* For demo purposes, to show the fixed widget */
+            background-color: #f0f2f5;
+        }
+
+        /* Fixed positioning for the Line widget button */
+        .line-widget-container {
+            position: fixed;
+            bottom: 20px; /* Distance from bottom */
+            right: 20px; /* Distance from right */
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        /* Styles for the Line button */
+        .line-button {
+            background-color: #06C755; /* Line green color */
+            color: white;
+            border-radius: 9999px; /* Fully rounded (circle) */
+            padding: 12px; /* Padding for the icon */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px; /* Fixed width for circle */
+            height: 56px; /* Fixed height for circle */
+        }
+
+        .line-button:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+        }
+
+        /* SVG icon for Line */
+        .line-icon {
+            width: 32px;
+            height: 32px;
+            fill: currentColor; /* Use current text color (white) */
+        }
+
+        /* Pop-up content styles */
+        .line-popup-content {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            margin-bottom: 10px; /* Space between popup and button */
+            width: 250px;
+            text-align: center;
+            opacity: 0; /* Initially hidden */
+            visibility: hidden; /* Initially hidden */
+            transform: translateY(10px); /* Slight initial offset */
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+        }
+
+        .line-popup-content.active {
+            opacity: 1; /* Show when active */
+            visibility: visible; /* Show when active */
+            transform: translateY(0); /* Move to original position */
+        }
+
+        .line-popup-content p {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+
+        .line-popup-content a {
+            display: inline-block;
+            background-color: #06C755;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .line-popup-content a:hover {
+            background-color: #05a84a; /* Slightly darker green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="p-8 text-center text-gray-600">
+        <h2 class="text-2xl font-bold mb-4">ยินดีต้อนรับสู่เว็บไซต์ของเรา!</h2>
+        <p>เลื่อนลงเพื่อดูวิดเจ็ต LINE ที่มุมขวาล่าง</p>
+        <div class="h-[1000px] bg-gray-100 rounded-lg mt-8 flex items-center justify-center text-gray-500">
+            เนื้อหาเว็บไซต์เพิ่มเติม...
+        </div>
+    </div>
+
+    <div class="line-widget-container flex flex-col items-end">
+        <div id="linePopup" class="line-popup-content">
+            <p>ติดต่อเราผ่าน LINE:</p>
+            <a href="https://line.me/ti/p/~YOUR_LINE_ID_HERE" target="_blank" rel="noopener noreferrer">
+                เพิ่มเพื่อนใน LINE
+            </a>
+        </div>
+
+        <button id="lineButton" class="line-button">
+            <svg class="line-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.001 0C5.372 0 0 5.372 0 12.001c0 6.096 4.394 11.173 10.155 11.884.737.135 1.006-.319 1.006-.707 0-.348-.015-1.27-.015-2.493-4.27 1.004-5.17-2.05-5.17-2.05-.698-1.77-1.704-2.245-1.704-2.245-1.39-1.01.105-1.01.105-1.01 1.53.109 2.34 1.575 2.34 1.575 1.35 2.33 3.54 1.657 4.402 1.266.135-.98.53-1.657.962-2.043-3.368-.381-6.897-1.684-6.897-7.502 0-1.657.588-3.016 1.575-4.083-.15-.381-.698-1.93.135-4.02 0 0 1.285-.407 4.205 1.554 1.22-.348 2.52-.523 3.82-.523 1.3.001 2.6.175 3.82.523 2.92-1.961 4.205-1.554 4.205-1.554.833 2.09.28 3.64.135 4.02 1.006 1.067 1.575 2.426 1.575 4.083 0 5.83-3.53 7.11-6.897 7.502.53.453 1.006 1.35 1.006 2.72 0 1.961-.015 3.54-.015 4.02 0 .388.27.842 1.006.707C19.607 23.174 24 18.097 24 12.001 24 5.372 18.628 0 12.001 0z"/>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Get references to the button and popup
+        const lineButton = document.getElementById('lineButton');
+        const linePopup = document.getElementById('linePopup');
+
+        // Add click event listener to the button
+        lineButton.addEventListener('click', () => {
+            // Toggle the 'active' class to show/hide the popup
+            linePopup.classList.toggle('active');
+        });
+
+        // Optional: Close popup if clicked outside
+        document.addEventListener('click', (event) => {
+            if (!lineButton.contains(event.target) && !linePopup.contains(event.target)) {
+                linePopup.classList.remove('active');
+            }
+        });
+    </script>
+
+</body>
+</html>
