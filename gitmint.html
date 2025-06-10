@@ -1,47 +1,331 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gitmint-th - LINE Official Account</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* Custom Styles and Color Definitions */
+import React, { useState, useEffect, useRef } from 'react';
+
+// Hardcoded car data - In a real application, this would come from a database.
+const carData = [
+  {
+    id: 'car001',
+    brand: 'Honda',
+    model: 'Civic',
+    year: 2023,
+    type: 'Sedan',
+    seats: 5,
+    transmission: 'Automatic',
+    price_per_day: 1200,
+    available_dates: ['2024-07-10', '2024-07-11', '2024-07-12'],
+    features: ['GPS', 'Bluetooth', 'Airbag'],
+    image_url: 'https://placehold.co/300x200/ADD8E6/000000?text=Honda+Civic',
+    description: 'รถยนต์ Honda Civic ปี 2023 สภาพดี เหมาะสำหรับการเดินทางในเมืองและต่างจังหวัด.',
+    keywords: ['ฮอนด้า ซีวิค', 'ซีวิค', 'Honda Civic', 'รถเก๋ง'],
+  },
+  {
+    id: 'car002',
+    brand: 'Toyota',
+    model: 'Corolla Cross',
+    year: 2022,
+    type: 'SUV',
+    seats: 5,
+    transmission: 'Automatic',
+    price_per_day: 1500,
+    available_dates: ['2024-07-15', '2024-07-16', '2024-07-17', '2024-07-18'],
+    features: ['Panoramic Roof', 'Cruise Control', 'Parking Assist'],
+    image_url: 'https://placehold.co/300x200/FFD700/000000?text=Corolla+Cross',
+    description: 'Toyota Corolla Cross ปี 2022 SUV ยอดนิยม พร้อมฟีเจอร์ครบครัน.',
+    keywords: ['โตโยต้า โคโรลล่า ครอส', 'ครอส', 'SUV โตโยต้า', 'รถครอบครัว'],
+  },
+  {
+    id: 'car007',
+    brand: 'Toyota',
+    model: 'Vios',
+    year: 2021,
+    type: 'Sedan',
+    seats: 5,
+    transmission: 'Automatic',
+    price_per_day: 900,
+    available_dates: ['2024-07-10', '2024-07-11', '2024-07-12'],
+    features: ['Air Conditioning', 'USB Charger', 'Keyless Entry'],
+    image_url: 'https://placehold.co/300x200/808080/FFFFFF?text=Toyota+Vios',
+    description: 'Toyota Vios ปี 2021 รถยนต์อีโคคาร์ยอดนิยม ประหยัดน้ำมัน.',
+    keywords: ['โตโยต้า วีออส', 'วีออส', 'Vios', 'รถเก๋งเล็ก'],
+  },
+  {
+    id: 'car008',
+    brand: 'Mitsubishi',
+    model: 'Pajero Sport',
+    year: 2023,
+    type: 'SUV',
+    seats: 7,
+    transmission: 'Automatic',
+    price_per_day: 1800,
+    available_dates: ['2024-08-10', '2024-08-11', '2024-08-12'],
+    features: ['360 Camera', 'Leather Seats', 'Electric Tailgate'],
+    image_url: 'https://placehold.co/300x200/A52A2A/FFFFFF?text=Pajero+Sport',
+    description: 'Mitsubishi Pajero Sport ปี 2023 SUV ขนาดใหญ่ 7 ที่นั่ง เหมาะสำหรับครอบครัว.',
+    keywords: ['มิตซูบิชิ ปาเจโร่ สปอร์ต', 'ปาเจโร่ สปอร์ต', 'Pajero Sport', 'รถ SUV 7 ที่นั่ง'],
+  },
+  {
+    id: 'car009',
+    brand: 'Ford',
+    model: 'Ranger Raptor',
+    year: 2024,
+    type: 'Pickup Truck',
+    seats: 5,
+    transmission: 'Automatic',
+    price_per_day: 2500,
+    available_dates: ['2024-08-15', '2024-08-16'],
+    features: ['Off-road Capability', 'Fox Shocks', 'Sport Bar'],
+    image_url: 'https://placehold.co/300x200/4682B4/FFFFFF?text=Ford+Raptor',
+    description: 'Ford Ranger Raptor ปี 2024 กระบะสายลุย สมรรถนะสูง พร้อมลุยทุกเส้นทาง.',
+    keywords: ['ฟอร์ด แรฟเตอร์', 'แรฟเตอร์', 'Raptor', 'กระบะ'],
+  },
+  {
+    id: 'car010',
+    brand: 'Honda',
+    model: 'City',
+    year: 2022,
+    type: 'Sedan',
+    seats: 5,
+    transmission: 'Automatic',
+    price_per_day: 1000,
+    available_dates: ['2024-07-28', '2024-07-29', '2024-07-30'],
+    features: ['ECON Mode', 'Touchscreen Display', 'Rear Camera'],
+    image_url: 'https://placehold.co/300x200/6A5ACD/FFFFFF?text=Honda+City',
+    description: 'Honda City ปี 2022 รถยนต์ยอดนิยมในเมือง ประหยัดน้ำมัน.',
+    keywords: ['ฮอนด้า ซิตี้', 'ซิตี้', 'Honda City', 'รถเก๋งเล็ก'],
+  },
+  {
+    id: 'car011',
+    brand: 'Nissan',
+    model: 'Almera',
+    year: 2022,
+    type: 'Sedan',
+    seats: 5,
+    transmission: 'Automatic',
+    price_per_day: 950,
+    available_dates: ['2024-08-01', '2024-08-02', '2024-08-03'],
+    features: ['Nissan Intelligent Mobility', 'Comfortable Cabin', 'Fuel Efficient'],
+    image_url: 'https://placehold.co/300x200/F4A460/000000?text=Nissan+Almera',
+    description: 'Nissan Almera ปี 2022 รถยนต์อีโคคาร์ห้องโดยสารกว้างขวาง.',
+    keywords: ['นิสสัน อเมล่า', 'อเมล่า', 'Almera', 'อีโคคาร์'],
+  },
+  {
+    id: 'car012',
+    brand: 'Isuzu',
+    model: 'MU-7',
+    year: 2014, // Older model, assuming this is the one user meant
+    type: 'SUV',
+    seats: 7,
+    transmission: 'Automatic',
+    price_per_day: 1400,
+    available_dates: ['2024-08-08', '2024-08-09'],
+    features: ['Durable Engine', 'Spacious Interior', 'Robust Suspension'],
+    image_url: 'https://placehold.co/300x200/D2691E/FFFFFF?text=Isuzu+MU-7',
+    description: 'Isuzu MU-7 ปี 2014 รถ SUV แข็งแกร่ง ทนทาน 7 ที่นั่ง.',
+    keywords: ['อีซูซุ มิวเซเว่น', 'มิวเซเว่น', 'MU-7', 'Isuzu SUV'],
+  },
+  // Add more cars here, up to your 40 cars following the same structure
+];
+
+// Helper function to find relevant car data based on user query
+const findRelevantCarData = (query) => {
+  const lowerCaseQuery = query.toLowerCase();
+  const relevantCars = carData.filter(car =>
+    car.keywords.some(keyword => lowerCaseQuery.includes(keyword.toLowerCase())) ||
+    lowerCaseQuery.includes(car.brand.toLowerCase()) ||
+    lowerCaseQuery.includes(car.model.toLowerCase()) ||
+    lowerCaseQuery.includes(car.type.toLowerCase()) ||
+    lowerCaseQuery.includes(car.description.toLowerCase())
+  );
+  return relevantCars;
+};
+
+// Component to display a single car card
+const CarCard = ({ car, isHorizontal = false }) => (
+  <div className={`bg-white rounded-lg shadow-md p-4 flex flex-col items-center border border-gray-200 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ${isHorizontal ? 'w-64 flex-shrink-0 mx-2' : ''}`}>
+    <img src={car.image_url} alt={`${car.brand} ${car.model}`} className="w-full h-40 object-cover rounded-md mb-3" onError={(e) => e.target.src='https://placehold.co/300x200/CCCCCC/000000?text=Image+Not+Found'}/>
+    <h3 className="text-xl font-bold text-gray-800 mb-1 text-center">{car.brand} {car.model}</h3>
+    <p className="text-gray-600 text-sm mb-2">{car.year} | {car.type} | {car.seats} ที่นั่ง</p>
+    <p className="text-green-600 font-semibold text-lg mb-2">฿{car.price_per_day} / วัน</p>
+    <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-700 mb-3">
+      {car.features.map((feature, index) => (
+        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+          {feature}
+        </span>
+      ))}
+    </div>
+    <p className="text-gray-700 text-center text-sm">{car.description}</p>
+    {/* For a real app, you'd add a "Book Now" button linking to a booking form */}
+  </div>
+);
+
+function App() {
+  const [messages, setMessages] = useState([]); // State to store chat messages
+  const [input, setInput] = useState(''); // State for user input
+  const [loading, setLoading] = useState(false); // Loading state for AI response
+  const messagesEndRef = useRef(null); // Ref for scrolling to the latest message
+  // New state for user-provided API key
+  const [userApiKey, setUserApiKey] = useState('');
+  const [apiKeyInput, setApiKeyInput] = useState(''); // State for the API key input field
+
+  // Filter cars for main display (Toyota Vios and Mitsubishi Pajero Sport)
+  const featuredCars = carData.filter(car =>
+    (car.brand === 'Toyota' && car.model === 'Vios') ||
+    (car.brand === 'Mitsubishi' && car.model === 'Pajero Sport')
+  );
+
+  // All cars for horizontal scroll (except Corolla Cross, as requested to be removed)
+  const allCarsForHorizontalScroll = carData.filter(car =>
+    !(car.brand === 'Toyota' && car.model === 'Corolla Cross')
+  );
+
+  // Ref for the horizontal scroll container
+  const scrollContainerRef = useRef(null);
+
+  // Scroll to the bottom of the chat when messages update
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Initial greeting message from the bot on first load
+  useEffect(() => {
+    setMessages([{ sender: 'bot', text: 'สวัสดีครับ Gitmint-th ยินดีให้บริการ! มีอะไรให้ผมช่วยเรื่องรถเช่าบ้างครับ?' }]);
+  }, []);
+
+  // Effect to scroll to bottom whenever messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Function to set the API key from user input
+  const handleSetApiKey = () => {
+    if (apiKeyInput.trim()) {
+      setUserApiKey(apiKeyInput.trim());
+      // Optionally clear input after setting
+      // setApiKeyInput('');
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: 'API Key ถูกตั้งค่าแล้ว! ตอนนี้แชทบอทพร้อมใช้งาน.' }]);
+    } else {
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: 'กรุณากรอก API Key ก่อนเริ่มใช้งานแชทบอท!' }]);
+    }
+  };
+
+  // Function to send message to the chatbot
+  const sendMessage = async () => {
+    if (input.trim() === '') return;
+    if (!userApiKey) {
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: 'กรุณาตั้งค่า API Key ก่อนเริ่มใช้งานแชทบอท!' }]);
+      return;
+    }
+
+    const userMessage = { sender: 'user', text: input };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const relevantCars = findRelevantCarData(userMessage.text);
+      let context = "";
+      if (relevantCars.length > 0) {
+        context = "ข้อมูลรถยนต์ที่เกี่ยวข้อง:\n";
+        relevantCars.forEach(car => {
+          context += `- รุ่น: ${car.brand} ${car.model} (${car.year}), ประเภท: ${car.type}, จำนวนที่นั่ง: ${car.seats}, ราคาต่อวัน: ${car.price_per_day} บาท, คุณสมบัติ: ${car.features.join(', ')}, รายละเอียด: ${car.description}.\n`;
+        });
+        context += "ใช้ข้อมูลนี้เพื่อตอบคำถามของผู้ใช้ หากข้อมูลไม่เพียงพอ ให้บอกผู้ใช้ว่าต้องการข้อมูลเพิ่มเติม.\n\n";
+      } else {
+        context = "ไม่มีข้อมูลรถยนต์ที่เกี่ยวข้องโดยตรงในฐานข้อมูลของเรา. ตอบคำถามทั่วไปหรือถามข้อมูลเพิ่มเติมจากผู้ใช้.\n\n";
+      }
+
+      // Construct the prompt for the AI model
+      const prompt = `คุณคือแชทบอทช่วยเหลือลูกค้าสำหรับร้านเช่ารถ Gitmint-th.com
+      บทสนทนาก่อนหน้า: ${messages.map(msg => `${msg.sender}: ${msg.text}`).join('\n')}
+      ${context}
+      คำถามของผู้ใช้: "${userMessage.text}"
+
+      โปรดให้คำตอบที่ถูกต้อง เป็นประโยชน์ และสุภาพ โดยอ้างอิงจากข้อมูลรถยนต์ที่ให้ไว้ หากเกี่ยวข้อง. หากผู้ใช้สอบถามเกี่ยวกับรถที่ไม่มีในรายการ ให้บอกว่าเราไม่มีรถรุ่นนั้น และเสนอรุ่นอื่นที่มี หรือสอบถามว่าต้องการข้อมูลเพิ่มเติมเกี่ยวกับอะไร. หากผู้ใช้ต้องการจอง ให้แนะนำให้ระบุวันเช่า หรือกดลิงก์ไปหน้าจอง.`;
+
+      // Simulating chat history for the API call (this would be managed server-side in production)
+      let chatHistory = [];
+      chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+      const payload = { contents: chatHistory };
+      // Using userApiKey from state
+      const apiKey = userApiKey; 
+
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      let botResponseText = "ขออภัยครับ เกิดข้อผิดพลาดในการประมวลผลคำตอบ โปรดลองใหม่อีกครั้ง.";
+
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        botResponseText = result.candidates[0].content.parts[0].text;
+      } else if (result.error) {
+        console.error('AI API Error:', result.error);
+        botResponseText = `ขออภัยครับ มีข้อผิดพลาดจากระบบ AI: ${result.error.message || 'ไม่ทราบข้อผิดพลาด'}. โปรดตรวจสอบ API Key ของคุณ.`;
+      } else {
+        console.warn('Unexpected AI response structure:', result);
+      }
+
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: botResponseText }]);
+    } catch (error) {
+      console.error('Error sending message to AI:', error);
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: 'ขออภัยครับ ไม่สามารถเชื่อมต่อกับ AI ได้ในขณะนี้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตหรือ API Key ของคุณ.' }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Enter key press for sending message
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !loading) {
+      sendMessage();
+    }
+  };
+
+  // Handle horizontal scrolling
+  const scroll = (scrollOffset) => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft += scrollOffset;
+    }
+  };
+
+  return (
+    // The main container will adopt the bg-gray-50 from the original HTML
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+      {/* Font Awesome for icons */}
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></link>
+      {/* Custom styles from original gitmint.html - These are defined in the head of index.html for React */}
+      {/* However, the root variables can be conceptually used by Tailwind classes */}
+      <style>
+        {`
         :root {
             --white: #FFFFFF;
             --dark-blue-black: #00171F;
             --medium-blue: #003459;
             --light-sky-blue: #ADEBFF;
-            --text-color: #333333; /* General text color for readability */
+            --text-color: #333333;
             --text-secondary-color: #555555;
         }
-
-        body {
-            font-family: 'Kanit', sans-serif;
-            color: var(--text-color);
-            background-color: var(--white); /* Changed from bg-gray-50 to var(--white) to match example's outer white space */
-        }
-
         .bg-primary { background-color: var(--medium-blue); }
         .text-primary { color: var(--medium-blue); }
         .border-primary { border-color: var(--medium-blue); }
-
         .bg-secondary { background-color: var(--dark-blue-black); }
         .text-secondary { color: var(--dark-blue-black); }
-
         .bg-accent { background-color: var(--light-sky-blue); }
         .text-accent { color: var(--light-sky-blue); }
-
         .hero-section {
             background-color: var(--medium-blue);
             color: var(--white);
         }
-
         .service-card {
             background-color: var(--white);
             border: 1px solid #e0e0e0;
-            border-radius: 0.75rem; /* 12px */
+            border-radius: 0.75rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .service-card:hover {
@@ -51,21 +335,19 @@
         .section-title {
             color: var(--dark-blue-black);
             font-weight: 700;
-            margin-bottom: 1.5rem; /* 24px */
+            margin-bottom: 1.5rem;
         }
         .btn-primary {
             background-color: var(--medium-blue);
             color: var(--white);
-            padding: 0.75rem 1.5rem; /* 12px 24px */
-            border-radius: 0.5rem; /* 8px */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 500;
             transition: background-color 0.3s ease;
         }
         .btn-primary:hover {
             background-color: var(--dark-blue-black);
         }
-
-        /* Icon placeholders - replace with actual SVGs or font icons */
         .icon-placeholder {
             display: inline-block;
             width: 24px;
@@ -92,196 +374,322 @@
             background-color: var(--medium-blue);
             color: var(--white);
         }
-
-        /* Ensure map placeholder is responsive */
         .map-placeholder iframe {
             width: 100%;
             height: 100%;
-            min-height: 300px; /* Minimum height for the map */
+            min-height: 300px;
         }
-
-        /* Added to make the body have the outer margins effect if needed */
-        /* body > div.page-wrapper {
-            max-width: 100%; 
+        /* Custom scrollbar style for horizontal scroll */
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
         }
-        @media (min-width: 1024px) { 
-            body > div.page-wrapper {
-                 Define overall page structure if header/footer need to be edge-to-edge
-                 while main content is constrained.
-                 For now, applying constraint to each section's container.
-            }
-        } */
+        .hide-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+        `}
+      </style>
 
-
-    </style>
-</head>
-<body class="bg-gray-50"> <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="w-full lg:max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center">
-            <div class="flex items-center space-x-3 mb-2 sm:mb-0">
-                <img src="https://placehold.co/40x40/003459/FFFFFF?text=GT" alt="โลโก้ Gitmint-th" class="rounded-full">
-                <div>
-                    <h1 class="text-lg font-semibold text-secondary">Gitmint-th</h1>
-                    <p class="text-xs text-gray-500">LINE Official Account</p>
-                </div>
+      {/* Header from gitmint.html */}
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="w-full lg:max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center">
+          <div className="flex items-center space-x-3 mb-2 sm:mb-0">
+            <img src="https://placehold.co/40x40/003459/FFFFFF?text=GT" alt="โลโก้ Gitmint-th" className="rounded-full" />
+            <div>
+              <h1 className="text-lg font-semibold text-secondary">Gitmint-th</h1>
+              <p className="text-xs text-gray-500">LINE Official Account</p>
             </div>
-
-            <nav class="flex space-x-3 sm:space-x-4">
-                <a href="#" class="p-2 rounded-full hover:bg-gray-200 transition-colors" title="โปรไฟล์">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                </a>
-                <a href="#" class="p-2 rounded-full hover:bg-gray-200 transition-colors" title="ข้อความ">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                </a>
-                <a href="#" class="p-2 rounded-full hover:bg-gray-200 transition-colors" title="ไทม์ไลน์">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                </a>
-                <a href="#" class="p-2 rounded-full hover:bg-gray-200 transition-colors" title="โทร">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                </a>
-            </nav>
+          </div>
+          <nav className="flex space-x-3 sm:space-x-4">
+            <a href="#" className="p-2 rounded-full hover:bg-gray-200 transition-colors" title="โปรไฟล์">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </a>
+            <a href="#" className="p-2 rounded-full hover:bg-gray-200 transition-colors" title="ข้อความ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </a>
+            <a href="#" className="p-2 rounded-full hover:bg-gray-200 transition-colors" title="ไทม์ไลน์">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            </a>
+            <a href="#" className="p-2 rounded-full hover:bg-gray-200 transition-colors" title="โทร">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </a>
+          </nav>
         </div>
-    </header>
+      </header>
 
-    <main class="w-full lg:max-w-6xl mx-auto px-4 py-8">
-
-        <section class="hero-section text-center py-12 sm:py-20 rounded-lg shadow-lg mb-12">
-            <img src="https://placehold.co/150x150/FFFFFF/003459?text=Gitmint" alt="โลโก้ Gitmint-th ขนาดใหญ่" class="mx-auto mb-6 rounded-full border-4 border-white">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-3">Gitmint-th (Official)</h2>
-            <p class="text-lg sm:text-xl mb-6 max-w-2xl mx-auto">แหล่งรวมบริการดิจิทัลครบวงจร จ้างง่าย ได้งานไว ปลอดภัย</p>
-            <div class="flex justify-center space-x-4 mb-8">
-                <a href="#" class="social-icon" title="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg></a>
-                <a href="#" class="social-icon" title="LINE"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .003c-6.628 0-12 5.372-12 12s5.372 12 12 12 12-5.372 12-12-5.372-12-12-12zm0 22c-5.523 0-10-4.478-10-10s4.477-10 10-10 10 4.478 10 10-4.477 10-10 10zm-2.5-6h5c.276 0 .5-.224.5-.5s-.224-.5-.5-.5h-5c-.276 0-.5.224-.5.5s.224.5.5.5zm0-3h5c.276 0 .5-.224.5-.5s-.224-.5-.5-.5h-5c-.276 0-.5.224-.5.5s.224.5.5.5zm0-3h5c.276 0 .5-.224.5-.5s-.224-.5-.5-.5h-5c-.276 0-.5.224-.5.5s.224.5.5.5zm-3.5 6.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5.672-1.5 1.5-1.5 1.5.671 1.5 1.5zm0-3c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5.672-1.5 1.5-1.5 1.5.671 1.5 1.5zm0-3c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5.672-1.5 1.5-1.5 1.5.671 1.5 1.5z"/></svg></a>
-                <a href="#" class="social-icon" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4c2.21 0 4 1.791 4 4s-1.79 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-            </div>
-            <a href="#services" class="btn-primary">ดูบริการของเรา</a>
+      {/* Main content wrapper */}
+      <main className="w-full lg:max-w-6xl mx-auto px-4 py-8">
+        {/* Hero Section from gitmint.html */}
+        <section className="hero-section text-center py-12 sm:py-20 rounded-lg shadow-lg mb-12">
+          <img src="https://placehold.co/150x150/FFFFFF/003459?text=Gitmint" alt="โลโก้ Gitmint-th ขนาดใหญ่" className="mx-auto mb-6 rounded-full border-4 border-white" />
+          <h2 className="text-3xl sm:text-4xl font-bold mb-3">สำนักงานบริหารธุรกิจ รุ่งโรจน์</h2>
+          <p className="text-lg sm:text-xl mb-6 max-w-2xl mx-auto">รถเช่าอุดรธานี</p> {/* Updated text */}
+          <div className="flex justify-center space-x-4 mb-8">
+            <a href="#" className="social-icon" title="Facebook"><i className="fab fa-facebook-f"></i></a>
+            <a href="#" className="social-icon" title="LINE"><i className="fab fa-line"></i></a>
+            <a href="#" className="social-icon" title="Instagram"><i className="fab fa-instagram"></i></a>
+          </div>
+          <a href="#car-listings" className="btn-primary">ดูรถยนต์ของเรา</a> {/* Link to car listings */}
         </section>
 
-        <section id="services" class="py-12">
-            <h2 class="text-3xl font-bold text-center section-title">บริการของเรา</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="service-card p-6 text-center">
-                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=กราฟิก" alt="[ภาพของ บริการออกแบบกราฟิก]" class="mx-auto mb-4 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-2 text-primary">ออกแบบกราฟิก</h3>
-                    <p class="text-sm text-secondary-color">โลโก้, แบนเนอร์, สื่อสิ่งพิมพ์</p>
+        {/* Section 1: Car Listings & Pricing (Toyota Vios & Mitsubishi Pajero Sport) */}
+        <section id="car-listings" className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-8 border border-gray-200">
+          <h2 className="text-3xl font-bold text-center text-blue-700 mb-6 section-title">
+            <span className="border-b-4 border-blue-500 pb-1">รถยนต์แนะนำ (Toyota & Mitsubishi)</span>
+          </h2>
+          {featuredCars.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {featuredCars.map(car => (
+                <CarCard key={car.id} car={car} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-600">ไม่มีรถยนต์แนะนำในขณะนี้</p>
+          )}
+
+          <p className="mt-6 text-center text-gray-600">
+            **ราคาที่แสดงเป็นราคาต่อวัน และอาจมีการเปลี่ยนแปลงตามช่วงเวลาและโปรโมชั่น.
+            กรุณาสอบถามแชทบอทหรือติดต่อเราสำหรับรายละเอียดเพิ่มเติมและวันที่ว่าง.
+            สถานที่รับรถ: อุดรธานี (สามารถจัดส่งได้ตามตกลง)**
+          </p>
+        </section>
+
+        {/* New Section for All Other Cars (Horizontal Scroll) */}
+        {allCarsForHorizontalScroll.length > 0 && (
+          <section className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-8 border border-gray-200 relative">
+            <h2 className="text-3xl font-bold text-center text-blue-700 mb-6 section-title">
+              <span className="border-b-4 border-blue-500 pb-1">รถยนต์รุ่นทั้งหมด</span>
+            </h2>
+            <div className="relative flex items-center">
+              <button
+                onClick={() => scroll(-300)} // Adjust scroll amount as needed
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full shadow-lg z-10 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="เลื่อนไปทางซ้าย"
+              >
+                <i className="fas fa-chevron-left"></i>
+              </button>
+
+              <div
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto pb-4 -mx-2 hide-scrollbar scroll-smooth"
+              >
+                {allCarsForHorizontalScroll.map(car => (
+                  <CarCard key={car.id} car={car} isHorizontal={true} />
+                ))}
+              </div>
+
+              <button
+                onClick={() => scroll(300)} // Adjust scroll amount as needed
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full shadow-lg z-10 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="เลื่อนไปทางขวา"
+              >
+                <i className="fas fa-chevron-right"></i>
+              </button>
+            </div>
+            {/* Custom scrollbar style is defined in the main style block above */}
+          </section>
+        )}
+
+        {/* Section 2: Chatbot Conversation */}
+        <section className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-8 border border-gray-200">
+          <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
+            <span className="border-b-4 border-blue-500 pb-1">คุยกับแชทบอทผู้ช่วย</span>
+          </h2>
+          <div className="flex flex-col h-[500px] sm:h-[600px] border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[75%] p-3 rounded-lg shadow-sm ${
+                      msg.sender === 'user'
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-200 text-gray-800'
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
                 </div>
-                <div class="service-card p-6 text-center">
-                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=การตลาด" alt="[ภาพของ บริการการตลาดออนไลน์]" class="mx-auto mb-4 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-2 text-primary">การตลาดออนไลน์</h3>
-                    <p class="text-sm text-secondary-color">SEO, โฆษณา, Social Media</p>
+              ))}
+              {loading && (
+                <div className="flex justify-start">
+                  <div className="max-w-[75%] p-3 rounded-lg shadow-sm bg-gray-200 text-gray-800 animate-pulse">
+                    กำลังพิมพ์...
+                  </div>
                 </div>
-                <div class="service-card p-6 text-center">
-                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=เขียน" alt="[ภาพของ บริการเขียนและแปลภาษา]" class="mx-auto mb-4 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-2 text-primary">เขียนและแปลภาษา</h3>
-                    <p class="text-sm text-secondary-color">บทความ, คอนเทนต์, แปลเอกสาร</p>
+              )}
+              <div ref={messagesEndRef} /> {/* For auto-scrolling */}
+            </div>
+
+            {/* Chatbot Input Area */}
+            <div className="flex items-center p-3 border-t border-gray-300 bg-white">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="พิมพ์คำถามเกี่ยวกับรถเช่า..."
+                className="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={loading}
+              />
+              <button
+                onClick={sendMessage}
+                className={`ml-3 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-all duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  loading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={loading}
+              >
+                ส่ง
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Original Services Section from gitmint.html - Retained as general services */}
+        <section id="services" className="py-12">
+            <h2 className="text-3xl font-bold text-center section-title">บริการอื่นๆ ของเรา</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="service-card p-6 text-center">
+                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=กราฟิก" alt="[Image of บริการออกแบบกราฟิก]" className="mx-auto mb-4 rounded-lg"/>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">ออกแบบกราฟิก</h3>
+                    <p className="text-sm text-secondary-color">โลโก้, แบนเนอร์, สื่อสิ่งพิมพ์</p>
                 </div>
-                <div class="service-card p-6 text-center">
-                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=เว็บ" alt="[ภาพของ บริการทำเว็บไซต์]" class="mx-auto mb-4 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-2 text-primary">เว็บไซต์และโปรแกรม</h3>
-                    <p class="text-sm text-secondary-color">พัฒนาเว็บ, แอปพลิเคชัน</p>
+                <div className="service-card p-6 text-center">
+                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=การตลาด" alt="[Image of บริการการตลาดออนไลน์]" className="mx-auto mb-4 rounded-lg"/>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">การตลาดออนไลน์</h3>
+                    <p className="text-sm text-secondary-color">SEO, โฆษณา, Social Media</p>
+                </div>
+                <div className="service-card p-6 text-center">
+                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=เขียน" alt="[Image of บริการเขียนและแปลภาษา]" className="mx-auto mb-4 rounded-lg"/>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">เขียนและแปลภาษา</h3>
+                    <p className="text-sm text-secondary-color">บทความ, คอนเทนต์, แปลเอกสาร</p>
+                </div>
+                <div className="service-card p-6 text-center">
+                    <img src="https://placehold.co/100x100/ADEBFF/003459?text=เว็บ" alt="[Image of บริการทำเว็บไซต์]" className="mx-auto mb-4 rounded-lg"/>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">เว็บไซต์และโปรแกรม</h3>
+                    <p className="text-sm text-secondary-color">พัฒนาเว็บ, แอปพลิเคชัน</p>
                 </div>
             </div>
         </section>
 
-        <section class="py-12 bg-accent/30 rounded-lg my-12 p-8">
-            <h2 class="text-3xl font-bold text-center section-title">ทำไมต้อง Gitmint-th?</h2>
-            <div class="grid md:grid-cols-3 gap-8 text-center">
-                <div class="p-4">
-                    <div class="icon-placeholder mx-auto mb-3 bg-medium-blue text-white">✔️</div>
-                    <h3 class="text-xl font-semibold mb-2 text-primary">ผู้เชี่ยวชาญคุณภาพ</h3>
-                    <p class="text-secondary-color">คัดกรองผู้เชี่ยวชาญ พร้อมรีวิวจากผู้ใช้จริง</p>
+        {/* Why Gitmint-th section */}
+        <section className="py-12 bg-accent/30 rounded-lg my-12 p-8">
+            <h2 className="text-3xl font-bold text-center section-title">ทำไมต้อง Gitmint-th?</h2>
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+                <div className="p-4">
+                    <div className="icon-placeholder mx-auto mb-3 bg-medium-blue text-white">✔️</div>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">ผู้เชี่ยวชาญคุณภาพ</h3>
+                    <p className="text-secondary-color">คัดกรองผู้เชี่ยวชาญ พร้อมรีวิวจากผู้ใช้จริง</p>
                 </div>
-                <div class="p-4">
-                    <div class="icon-placeholder mx-auto mb-3 bg-medium-blue text-white">🔒</div>
-                    <h3 class="text-xl font-semibold mb-2 text-primary">ระบบจ่ายเงินปลอดภัย</h3>
-                    <p class="text-secondary-color">Gitmint-th ถือเงินให้ ป้องกันการโกง</p>
+                <div className="p-4">
+                    <div className="icon-placeholder mx-auto mb-3 bg-medium-blue text-white">🔒</div>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">ระบบจ่ายเงินปลอดภัย</h3>
+                    <p className="text-secondary-color">Gitmint-th ถือเงินให้ ป้องกันการโกง</p>
                 </div>
-                <div class="p-4">
-                    <div class="icon-placeholder mx-auto mb-3 bg-medium-blue text-white">💬</div>
-                    <h3 class="text-xl font-semibold mb-2 text-primary">ทีมงานดูแลใกล้ชิด</h3>
-                    <p class="text-secondary-color">พร้อมช่วยเหลือ แก้ปัญหาตลอดการใช้บริการ</p>
+                <div className="p-4">
+                    <div className="icon-placeholder mx-auto mb-3 bg-medium-blue text-white">💬</div>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">ทีมงานดูแลใกล้ชิด</h3>
+                    <p className="text-secondary-color">พร้อมช่วยเหลือ แก้ปัญหาตลอดการใช้บริการ</p>
                 </div>
             </div>
         </section>
 
-        <section class="py-12">
-            <div class="max-w-3xl mx-auto text-center">
-                <img src="https://placehold.co/120x120/00171F/FFFFFF?text=ภาษี" alt="[ภาพของ ไอคอนเกี่ยวกับภาษี]" class="mx-auto mb-6">
-                <h2 class="text-3xl font-bold section-title">หมดกังวลเรื่องภาษี</h2>
-                <p class="text-lg text-secondary-color mb-4">
+        {/* No Tax Worry section */}
+        <section className="py-12">
+            <div className="max-w-3xl mx-auto text-center">
+                <img src="https://placehold.co/120x120/00171F/FFFFFF?text=ภาษี" alt="[Image of ไอคอนเกี่ยวกับภาษี]" className="mx-auto mb-6"/>
+                <h2 className="text-3xl font-bold section-title">หมดกังวลเรื่องภาษี</h2>
+                <p className="text-lg text-secondary-color mb-4">
                     Gitmint-th ช่วยจัดการเรื่องเอกสารภาษีให้ ทั้งใบกำกับภาษี และหนังสือรับรองการหักภาษี ณ ที่จ่าย (ใบ ทวิ 50)
                     ทำให้การจ้างงานและการใช้บริการเป็นเรื่องง่ายและถูกต้องตามกฎหมาย
                 </p>
-                <a href="#" class="btn-primary">เรียนรู้เพิ่มเติม</a>
+                <a href="#" className="btn-primary">เรียนรู้เพิ่มเติม</a>
             </div>
         </section>
 
-        <section class="py-12 bg-gray-100 rounded-lg my-12 p-8">
-            <h2 class="text-3xl font-bold text-center section-title">ติดต่อเรา</h2>
-            <div class="grid md:grid-cols-2 gap-8 items-start">
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-primary">เวลาทำการ</h3>
-                    <p class="text-secondary-color mb-1"><span class="font-medium">จันทร์ - ศุกร์:</span> 9:00 - 18:00 น.</p>
-                    <p class="text-secondary-color mb-4"><span class="font-medium">เสาร์ - อาทิตย์ และวันหยุดนักขัตฤกษ์:</span> ปิดทำการ</p>
 
-                    <h3 class="text-xl font-semibold mb-3 text-primary">เบอร์โทรศัพท์</h3>
-                    <a href="tel:+66629619597" class="text-blue-600 hover:underline">+66 62 961 9597</a>
+        {/* Section 3: Shop Map and Information (Combined with original Contact Us Section) */}
+        <section className="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-200">
+          <h2 className="text-3xl font-bold text-center text-blue-700 mb-6 section-title">
+            <span className="border-b-4 border-blue-500 pb-1">ที่ตั้งร้านของเราและติดต่อ</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h3 className="text-xl font-semibold mb-3 text-primary">เวลาทำการ</h3>
+              <p className="text-secondary-color mb-1"><span className="font-medium">จันทร์ - ศุกร์:</span> 9:00 - 18:00 น.</p>
+              <p className="text-secondary-color mb-4"><span className="font-medium">เสาร์ - อาทิตย์ และวันหยุดนักขัตฤกษ์:</span> ปิดทำการ</p>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3 text-primary">เว็บไซต์</h3>
-                    <a href="http://gitmint-th.com" target="_blank" class="text-blue-600 hover:underline break-all">http://gitmint-th.com</a>
+              <h3 className="text-xl font-semibold mb-3 text-primary">เบอร์โทรศัพท์</h3>
+              <a href="tel:+66629619597" className="text-blue-600 hover:underline">+66 62 961 9597</a>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3 text-primary">ที่อยู่</h3>
-                    <p class="text-secondary-color">บริษัท กิตมิ้นท์ (ประเทศไทย) จำกัด (สำนักงานใหญ่)</p>
-                    <p class="text-secondary-color">25/25 ซอยบ้านช้าง, ตำบลหมากแข้ง,</p>
-                    <p class="text-secondary-color">อำเภอเมืองอุดรธานี, จังหวัดอุดรธานี 41000</p>
-                </div>
-                <div class="map-placeholder rounded-lg overflow-hidden shadow-md h-full">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61248.13718353071!2d102.7599028413086!3d17.413809999448697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313e4c45ef39a88f%3A0x398b1f432193c36c!2z4Lit4Li44LiX4Lii4Liy4LiB4Liy4Lij4Li44LiH4LiZ4Li74Li04LiB4Liy4Lij!5e0!3m2!1sth!2sth!4v1685958000000!5m2!1sth!2sth"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="แผนที่ตั้ง Gitmint-th">
-                    </iframe>
-                </div>
+              <h3 className="text-xl font-semibold mt-6 mb-3 text-primary">เว็บไซต์</h3>
+              <a href="http://gitmint-th.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">http://gitmint-th.com</a>
+
+              <h3 className="text-xl font-semibold mt-6 mb-3 text-primary">ที่อยู่</h3>
+              <p className="text-secondary-color">บริษัท กิตมิ้นท์ (ประเทศไทย) จำกัด (สำนักงานใหญ่)</p>
+              <p className="text-secondary-color">25/25 ซอยบ้านช้าง, ตำบลหมากแข้ง,</p>
+              <p className="text-secondary-color">อำเภอเมืองอุดรธานี, จังหวัดอุดรธานี 41000</p>
             </div>
+            <div className="map-placeholder rounded-lg overflow-hidden shadow-md h-full">
+              {/* Using the map from gitmint.html as it seems to be the correct location */}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61248.13718353071!2d102.7599028413086!3d17.413809999448697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313e4c45ef39a88f%3A0x398b1f432193c36c!2z4Lit4Li44LiX4Lii4Liy4LiB4Liy4Lij4Li44LiH4LiZ4Li74Li04LiB4Liy4Lij!5e0!3m2!1sth!2sth!4v1685958000000!5m2!1sth!2sth"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="แผนที่ตั้ง Gitmint-th">
+              </iframe>
+            </div>
+          </div>
         </section>
-    </main>
+      </main>
 
-    <footer class="bg-secondary text-white py-8 text-center">
-        <div class="w-full lg:max-w-6xl mx-auto px-4">
-            <p class="mb-2">© <span id="currentYear"></span> Gitmint-th. All rights reserved.</p>
-            <div class="space-x-4">
-                <a href="#" class="hover:text-accent">ข้อตกลงในการใช้งาน</a>
-                <span>|</span>
-                <a href="#" class="hover:text-accent">นโยบายความเป็นส่วนตัว</a>
-            </div>
+      {/* Footer from gitmint.html - Modified to include API Key input */}
+      <footer className="bg-secondary text-white py-8 text-center">
+        <div className="w-full lg:max-w-6xl mx-auto px-4">
+          <p className="mb-2">© {new Date().getFullYear()} Gitmint-th. All rights reserved.</p>
+          <div className="space-x-4 mb-4">
+            <a href="#" className="hover:text-accent">ข้อตกลงในการใช้งาน</a>
+            <span>|</span>
+            <a href="#" className="hover:text-accent">นโยบายความเป็นส่วนตัว</a>
+          </div>
+
+          {/* API Key Input Section */}
+          <div className="bg-dark-blue-black p-4 rounded-lg shadow-inner mx-auto max-w-lg">
+            <h3 className="text-lg font-semibold text-white mb-2">ตั้งค่า Gemini/ChatGPT API Key</h3>
+            <input
+              type="password" // Use type="password" for sensitive info
+              value={apiKeyInput}
+              onChange={(e) => setApiKeyInput(e.target.value)}
+              placeholder="วาง API Key ของคุณที่นี่ (sk-xxxx หรือ AIzaSy...)"
+              className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+            />
+            <button
+              onClick={handleSetApiKey}
+              className="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors"
+            >
+              ตั้งค่า API Key
+            </button>
+            {userApiKey && (
+              <p className="text-green-400 text-sm mt-2">
+                API Key ถูกตั้งค่าแล้ว! แชทบอทพร้อมใช้งาน
+              </p>
+            )}
+            <p className="text-red-400 text-xs mt-3">
+              <span className="font-bold">คำเตือนด้านความปลอดภัย:</span> การใส่ API Key ตรงบนเว็บ Frontend นี้
+              ใช้สำหรับการสาธิตเท่านั้น. ในการใช้งานจริง (Production) ควรส่ง API Key ผ่าน
+              Backend Server ที่ปลอดภัยเสมอเพื่อป้องกันการรั่วไหล.
+            </p>
+          </div>
         </div>
-    </footer>
+      </footer>
+    </div>
+  );
+}
 
-    <script>
-        // Basic JavaScript for dynamic content like current year
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        // You can add more JavaScript here for interactivity, e.g.:
-        // - Mobile menu toggle
-        // - Smooth scrolling for anchor links
-        // - Image sliders or carousels
-
-        // Example: Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script>
-
-</body>
-</html>
+export default App;
