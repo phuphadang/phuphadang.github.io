@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rungroj Carrent</title>
+    <style>
+        body {
+            background-color: #011627; /* Updated background color */
+            color: white;
+            font-family: 'Kanit', sans-serif; /* Using a Thai font */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #161b22; /* Slightly lighter container */
+            border: 1px solid #30363d;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+        }
+        .car-image-placeholder {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto 25px auto;
+            background-color: #0d1117;
+            border: 2px dashed #58a6ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b949e;
+            font-size: 16px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8b949e;
+            font-size: 16px;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #c86dd7; /* Purplish-pink border */
+            background-color: #0d1117;
+            color: #c9d1d9;
+            box-sizing: border-box;
+            font-size: 16px;
+            box-shadow: 0 0 8px rgba(200, 109, 215, 0.4);
+        }
+        /* Style for date and time inputs */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+        }
+        .date-time-group {
+            display: flex;
+            gap: 10px;
+        }
+        .date-time-group > div {
+            flex: 1;
+        }
+        .book-now-btn {
+            background: linear-gradient(45deg, #3679f6, #c86dd7);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .book-now-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(88, 166, 255, 0.5);
+        }
+        .total-price {
+            margin-top: 20px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .total-price h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #8b949e;
+        }
+        .total-price p {
+            margin: 5px 0 0 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #63e2b7; /* Cyan-green color for price */
+        }
+
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Car Image Placeholder -->
+        <div class="car-image-placeholder">
+            <span>รูปรถยนต์</span>
+        </div>
+
+        <!-- Car Model Selection -->
+        <div class="form-group">
+            <label for="car-model">เลือกรุ่นรถยนต์</label>
+            <select id="car-model" onchange="calculateTotal()">
+                <optgroup label="Economy">
+                    <option value="800">New Yaris Sport</option>
+                    <option value="800">Almera Sportech</option>
+                    <option value="800">Ciaz</option>
+                    <option value="1000">City Turbo</option>
+                    <option value="1000">New Yaris Ativ</option>
+                </optgroup>
+                <optgroup label="Standard">
+                    <option value="1800">Veloz</option>
+                    <option value="1800">Cross</option>
+                    <option value="1800">Xpander</option>
+                    <option value="1990" selected>ISUZU M-X</option>
+                </optgroup>
+                <optgroup label="Premium">
+                     <option value="2000">TOYOTA VIGO CHAMP</option>
+                    <option value="2500">FORD RANGER RAPTOR</option>
+                    <option value="2200">Toyota Fortuner</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <!-- Delivery Location Selection -->
+        <div class="form-group">
+            <label for="delivery-location">สถานที่รับ-คืนรถยนต์</label>
+            <select id="delivery-location">
+                <option>สาขาหลัก รุ่งโรจน์ คาร์เร้นท์</option>
+                <option>สาขาสนามบินอุดรธานี</option>
+                <option>อื่นๆ</option>
+            </select>
+        </div>
+
+        <!-- Pickup Date and Time -->
+        <div class="form-group">
+            <label>วันและเวลารับรถ</label>
+            <div class="date-time-group">
+                <div>
+                    <input type="date" id="start-date" onchange="calculateTotal()">
+                </div>
+                <div>
+                    <input type="time" id="start-time" onchange="calculateTotal()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Return Date and Time -->
+         <div class="form-group">
+            <label>วันและเวลาคืนรถ</label>
+            <div class="date-time-group">
+                <div>
+                    <input type="date" id="end-date" onchange="calculateTotal()">
+                </div>
+                <div>
+                    <input type="time" id="end-time" onchange="calculateTotal()">
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Total Price Display -->
+        <div class="total-price" id="total-price-container">
+            <h2>ผลรวมราคาเช่า</h2>
+            <p id="total-cost">1,990 ฿</p>
+        </div>
+
+        <!-- Booking Button -->
+        <button class="book-now-btn">BOOK NOW</button>
+    </div>
+
+    <script>
+        // This function calculates the total rental cost and updates the display.
+        function calculateTotal() {
+            // Get the price from the selected car model.
+            const carPrice = parseFloat(document.getElementById('car-model').value) || 0;
+            
+            // Get start and end dates
+            const startDateValue = document.getElementById('start-date').value;
+            const endDateValue = document.getElementById('end-date').value;
+
+            // Proceed only if both dates are selected
+            if (startDateValue && endDateValue) {
+                const startDate = new Date(startDateValue);
+                const endDate = new Date(endDateValue);
+
+                // Calculate the difference in time
+                const timeDiff = endDate.getTime() - startDate.getTime();
+
+                // Calculate the difference in days, rounding up
+                let dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                // Ensure minimum rental is 1 day
+                if (dayDiff <= 0) {
+                    dayDiff = 1;
+                }
+                
+                // Calculate the total cost.
+                const totalCost = carPrice * dayDiff;
+            
+                // Find the element to display the total cost.
+                const totalCostElement = document.getElementById('total-cost');
+            
+                // Update the text with the new total, formatted as currency.
+                totalCostElement.innerText = totalCost.toLocaleString('th-TH') + ' ฿';
+
+            } else {
+                 // If dates are not set, calculate for 1 day as default
+                 const totalCost = carPrice * 1;
+                 document.getElementById('total-cost').innerText = totalCost.toLocaleString('th-TH') + ' ฿';
+            }
+        }
+        
+        // Set default dates and time and calculate initial total
+        function initialize() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            // Format to YYYY-MM-DD
+            const todayString = today.toISOString().split('T')[0];
+            const tomorrowString = tomorrow.toISOString().split('T')[0];
+
+            document.getElementById('start-date').value = todayString;
+            document.getElementById('end-date').value = tomorrowString;
+            
+            // Set default time to 10:30
+            document.getElementById('start-time').value = '10:30';
+            document.getElementById('end-time').value = '10:30';
+
+            calculateTotal();
+        }
+
+
+        // Calculate the initial total when the page loads.
+        window.onload = initialize;
+    </script>
+
+</body>
+</html>
