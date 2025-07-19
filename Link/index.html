@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toyota Corolla Cross - ร้านค้าออนไลน์</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -146,37 +145,28 @@
 </head>
 <body>
     <div class="product-card">
-        <!-- Product Image Section -->
         <div class="product-image-container">
-            <img id="carImage" src="https://rstr.in/uglogcfw1stdna/images/Szb36RQXAkc" alt="Toyota Corolla Cross" onerror="this.onerror=null;this.src='https://placehold.co/600x390/E0E0E0/000000?text=Image+Not+Found';" class="rounded-t-lg">
-            <!-- Left Arrow Button -->
+            <img id="carImage" src="./src/image/Toyota-Corolla-Cross.png" alt="Toyota Corolla Cross" onerror="this.onerror=null;this.src='./src/image/placeholder.png';" class="rounded-t-lg">
             <button class="carousel-arrow left" id="prevCarBtn">&#9664;</button>
-            <!-- Right Arrow Button -->
             <button class="carousel-arrow right" id="nextCarBtn">&#9654;</button>
         </div>
 
-        <!-- Product Details Section -->
         <div class="p-6 space-y-4">
             <h1 class="text-2xl font-bold text-gray-100" id="carName">Toyota Corolla Cross</h1>
 
             <div class="space-y-2">
-                <!-- Single Price Display -->
                 <div class="flex items-baseline px-2 py-1 rounded-md">
                     <span class="text-3xl font-bold mr-2 text-gray-100" id="carPrice">800฿</span>
                 </div>
             </div>
 
-            <!-- Slogan Section -->
             <div class="slogan-section">
                 <p class="text-base text-gray-300 mb-2" id="carSlogan"></p>
-                <!-- Changed color for "รถเช่าอุดรธานี รุ่งโรจน์คาร์เร้น" to pink-400 -->
                 <p class="text-sm font-bold text-pink-400">รถเช่าอุดรธานี รุ่งโรจน์คาร์เร้น</p>
-                <!-- Changed color for "หนึ่งในใจคุณ" to pure white -->
                 <p class="text-lg font-bold text-white">หนึ่งในใจคุณ ❤️</p>
             </div>
         </div>
 
-        <!-- Button Group inside the card -->
         <div class="button-group-inside-card">
             <a href="https://page.line.me/rungroj" target="_blank" class="line-button">
                 ไปที่ LINE Official Account
@@ -192,111 +182,6 @@
         </div>
     </div>
 
-    <script>
-        // Array containing car data
-        const cars = [
-            {
-                name: "Toyota Corolla Cross",
-                imageUrl: "https://rstr.in/uglogcfw1stdna/images/Szb36RQXAkc",
-                price: "1,499฿", // Updated price
-                slogan: "ขับเคลื่อนทุกเส้นทาง สู่ทุกจุดหมาย"
-            },
-            {
-                name: "ISUZU-MU-X",
-                imageUrl: "https://rstr.in/uglogcfw1stdna/images/E18Pw_rmeUM",
-                price: "1,990฿", // Updated price
-                slogan: "ความแกร่งที่มาพร้อมความสบาย ไปได้ทุกที่"
-            },
-            {
-                name: "New-Yaris-Sport",
-                imageUrl: "https://rstr.in/uglogcfw1stdna/images/AlFmQvqqPAe",
-                price: "800฿", // Updated price
-                slogan: "ความคล่องตัวในเมือง สปอร์ตทุกการขับขี่"
-            },
-            {
-                name: "FordRanger-Raptor",
-                imageUrl: "https://rstr.in/uglogcfw1stdna/images/XJS3urVA3Et",
-                price: "1,499฿",
-                slogan: "ลุยทุกเส้นทาง แกร่งทุกสภาพ"
-            },
-            {
-                name: "NewYaris-Ativ",
-                imageUrl: "https://rstr.in/uglogcfw1stdna/images/nZIG9IalvLF",
-                price: "900฿",
-                slogan: "สไตล์คนเมือง ประหยัดน้ำมัน"
-            },
-            {
-                name: "Pajero-Sport-Edition",
-                imageUrl: "https://rstr.in/uglogcfw1stdna/images/HjZUE4WS5QE",
-                price: "1,990฿",
-                slogan: "เหนือระดับทุกการเดินทาง"
-            }
-        ];
-
-        let currentIndex = 0; // Keep track of the current car being displayed
-
-        // Get HTML elements by their IDs
-        const carImage = document.getElementById('carImage');
-        const carName = document.getElementById('carName');
-        const carPrice = document.getElementById('carPrice'); // Changed from dailyPrice
-        const carSlogan = document.getElementById('carSlogan');
-        const prevCarBtn = document.getElementById('prevCarBtn');
-        const nextCarBtn = document.getElementById('nextCarBtn');
-        const shareOnLineButton = document.getElementById('shareOnLineButton');
-
-        /**
-         * Updates the displayed car information based on the given index.
-         * @param {number} index - The index of the car in the 'cars' array to display.
-         */
-        function displayCar(index) {
-            const car = cars[index];
-            carImage.src = car.imageUrl;
-            carImage.alt = car.name;
-            carName.textContent = car.name;
-            carPrice.textContent = car.price; // Updated to single price
-            carSlogan.textContent = car.slogan;
-        }
-
-        /**
-         * Navigates to the previous car in the carousel.
-         * Loops to the last car if currently at the first car.
-         */
-        function showPrevCar() {
-            currentIndex = (currentIndex - 1 + cars.length) % cars.length;
-            displayCar(currentIndex);
-        }
-
-        /**
-         * Navigates to the next car in the carousel.
-         * Loops to the first car if currently at the last car.
-         */
-        function showNextCar() {
-            currentIndex = (currentIndex + 1) % cars.length;
-            displayCar(currentIndex);
-        }
-
-        // Add event listeners to navigation buttons
-        prevCarBtn.addEventListener('click', showPrevCar);
-        nextCarBtn.addEventListener('click', showNextCar);
-
-        // Add event listener for the LINE Share button
-        shareOnLineButton.addEventListener('click', function() {
-            // Get the current page URL to share
-            const pageUrl = encodeURIComponent(window.location.href);
-            // Get the page title for sharing (optional, but good practice)
-            const pageTitle = encodeURIComponent(document.title);
-
-            // LINE Share URL scheme
-            const lineShareUrl = `https://social-plugins.line.me/lineit/share?url=${pageUrl}&text=${pageTitle}`;
-
-            // Open LINE app or web interface
-            window.open(lineShareUrl, '_blank');
-        });
-
-        // Initialize with the first car when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            displayCar(currentIndex);
-        });
-    </script>
+    <script src="./src/js/script.js"></script>
 </body>
 </html>
