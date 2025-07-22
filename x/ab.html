@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>หน้ารวมวีดีโอ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      color: #333;
+    }
+    header {
+      background-color: #0288d1;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    footer {
+      background-color: #004d40;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    iframe {
+      width: 100%;
+      height: 250px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 100%;
+      border-radius: 12px;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin: 2rem;
+    }
+    .pagination button {
+      background-color: #0097a7;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .pagination button:hover {
+      background-color: #00796b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>รวมวีดีโอ</h1>
+  </header>
+
+  <div class="video-grid" id="videoContainer">
+    <!-- วีดีโอจะแสดงที่นี่ -->
+  </div>
+
+  <div class="pagination">
+    <button onclick="prevPage()">ย้อนกลับ</button>
+    <span id="pageInfo" style="padding: 0 1rem;"></span>
+    <button onclick="nextPage()">หน้าถัดไป</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 เว็บไซต์วีดีโอ</p>
+  </footer>
+
+  <script>
+    let currentPage = 1;
+    const perPage = 10;
+    const totalPages = 5;
+
+    async function loadPage(page) {
+      const container = document.getElementById("videoContainer");
+      const pageInfo = document.getElementById("pageInfo");
+      container.innerHTML = '';
+      pageInfo.textContent = `หน้าที่ ${page} จาก ${totalPages}`;
+
+      try {
+        const res = await fetch(`https://avdbapi.com/api.php/provide/vod/at/json?ac=detail&t=3&pg=${page}&limit=${perPage}`);
+        const json = await res.json();
+        const listData = json.list || [];
+
+        listData.forEach(item => {
+          const wrapper = document.createElement("div");
+
+          const poster = document.createElement("img");
+          poster.src = item.poster_url;
+
+          const iframe = document.createElement("iframe");
+          iframe.src = item.episodes?.server_data?.Full?.link_embed || "";
+          iframe.allowFullscreen = true;
+
+          wrapper.appendChild(poster);
+          wrapper.appendChild(iframe);
+          container.appendChild(wrapper);
+        });
+      } catch (error) {
+        console.error("โหลดข้อมูลไม่สำเร็จ", error);
+      }
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadPage(currentPage);
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+      }
+    }
+
+    loadPage(currentPage);
+  </script>
+</body>
+</html>
