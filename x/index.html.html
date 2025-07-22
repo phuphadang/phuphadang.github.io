@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าหลัก - ข่าวล่าสุด</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gitmint-dark': '#0d1117',
+                        'gitmint-blue': '#22d3ee',
+                        'gitmint-pink': '#f472b6',
+                        'gitmint-card': '#161b22',
+                        'gitmint-border': '#30363d',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+            background-color: #0d1117;
+        }
+        .news-card-image {
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            background-color: #30363d; /* สีพื้นหลังสำหรับรูปภาพที่กำลังโหลด */
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #161b22; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    </style>
+</head>
+<body class="text-white bg-gitmint-dark">
+
+    <!-- Main container -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header / Navigation -->
+        <header class="py-6">
+            <nav class="flex items-center justify-between">
+                <a href="#" class="text-3xl font-bold text-gitmint-blue tracking-wider">Gitmintgo</a>
+                <div class="relative w-full max-w-xs">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+                    </div>
+                    <input type="text" placeholder="ค้นหาข่าว..." class="w-full bg-gitmint-card border border-gitmint-border text-white rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-gitmint-blue transition-all duration-300">
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="py-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gitmint-pink">ข่าวล่าสุดจากทั่วโลก</h2>
+
+            <!-- Responsive Grid for News Cards -->
+            <div id="news-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <!-- Skeleton Loader Cards will be dynamically replaced by JavaScript -->
+                <!-- การ์ดเปล่าจะถูกแทนที่ด้วยข้อมูลข่าวจาก API -->
+                <div class="bg-gitmint-card border border-gitmint-border rounded-lg overflow-hidden shadow-xl animate-pulse">
+                    <div class="aspect-video bg-gray-700"></div>
+                    <div class="p-4">
+                        <div class="h-5 bg-gray-700 rounded w-full mb-3"></div>
+                        <div class="h-5 bg-gray-700 rounded w-3/4 mb-4"></div>
+                        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+                <!-- Repeat skeleton loader -->
+                <div class="bg-gitmint-card border border-gitmint-border rounded-lg overflow-hidden shadow-xl animate-pulse">
+                    <div class="aspect-video bg-gray-700"></div>
+                    <div class="p-4">
+                        <div class="h-5 bg-gray-700 rounded w-full mb-3"></div>
+                        <div class="h-5 bg-gray-700 rounded w-3/4 mb-4"></div>
+                        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+                <div class="bg-gitmint-card border border-gitmint-border rounded-lg overflow-hidden shadow-xl animate-pulse">
+                    <div class="aspect-video bg-gray-700"></div>
+                    <div class="p-4">
+                        <div class="h-5 bg-gray-700 rounded w-full mb-3"></div>
+                        <div class="h-5 bg-gray-700 rounded w-3/4 mb-4"></div>
+                        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+                <div class="bg-gitmint-card border border-gitmint-border rounded-lg overflow-hidden shadow-xl animate-pulse">
+                    <div class="aspect-video bg-gray-700"></div>
+                    <div class="p-4">
+                        <div class="h-5 bg-gray-700 rounded w-full mb-3"></div>
+                        <div class="h-5 bg-gray-700 rounded w-3/4 mb-4"></div>
+                        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-8 mt-8 border-t border-gitmint-border">
+            <p class="text-gray-500 text-sm">
+                ขับเคลื่อนโดย <a href="https://newsapi.org/" target="_blank" class="hover:text-gitmint-blue">NewsAPI.org</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- JavaScript for fetching API data -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchNews();
+        });
+
+        async function fetchNews() {
+            // ใส่ API Key ที่ได้รับมาเรียบร้อยแล้ว
+            const apiKey = '461c6fbad59641d4bceb676c9b64bcb5'; 
+            const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&category=technology&pageSize=12&apiKey=${apiKey}`;
+
+            const newsGrid = document.getElementById('news-grid');
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`ไม่สามารถดึงข้อมูลได้: ${errorData.message}`);
+                }
+
+                const data = await response.json();
+                const articles = data.articles;
+
+                // ล้างการ์ดเปล่า (Skeleton Loaders) ออก
+                newsGrid.innerHTML = '';
+
+                if (articles.length === 0) {
+                    newsGrid.innerHTML = `<p class="text-center text-gray-400 col-span-full">ไม่พบข่าวในขณะนี้</p>`;
+                    return;
+                }
+
+                // วนลูปสร้างการ์ดข่าวแต่ละใบ
+                articles.forEach(article => {
+                    // หากข่าวไม่มีหัวข้อ ให้ข้ามไป
+                    if (!article.title) {
+                        return;
+                    }
+
+                    // ใช้รูปภาพสำรองหากไม่มีรูปภาพจาก API
+                    const imageUrl = article.urlToImage || 'https://placehold.co/600x400/0d1117/30363d?text=No+Image';
+
+                    const card = `
+                        <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="block bg-gitmint-card border border-gitmint-border rounded-lg overflow-hidden shadow-xl hover:border-gitmint-blue transition-all duration-300 group">
+                            <img src="${imageUrl}" alt="News Image" class="news-card-image" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0d1117/30363d?text=Image+Error';">
+                            <div class="p-4">
+                                <h3 class="text-lg font-semibold text-gray-100 mb-2 group-hover:text-gitmint-blue transition-colors">${article.title}</h3>
+                                <p class="text-sm text-gray-400">${article.source.name}</p>
+                            </div>
+                        </a>
+                    `;
+                    newsGrid.innerHTML += card;
+                });
+
+            } catch (error) {
+                // แสดงข้อความ Error ใน Grid หากดึงข้อมูลไม่สำเร็จ
+                console.error('Error fetching news:', error);
+                newsGrid.innerHTML = `<p class="text-center text-red-400 col-span-full">${error.message}</p>`;
+            }
+        }
+    </script>
+
+</body>
+</html>
