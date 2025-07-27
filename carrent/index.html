@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฝังโพสต์ Facebook (ธีมมืด)</title>
+    <style>
+        /* สไตล์พื้นฐานสำหรับจัดหน้าให้อยู่ตรงกลาง */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1c1e21; /* สีพื้นหลังธีมมืด */
+            font-family: sans-serif;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* คอนเทนเนอร์สำหรับโพสต์ เพื่อควบคุมความกว้างสูงสุดและทำให้ปรับขนาดได้ */
+        .facebook-post-container {
+            max-width: 500px; /* ความกว้างมาตรฐานของโพสต์ที่ฝัง */
+            width: 100%;
+            /* ตัวปลั๊กอินจะจัดการสไตล์ของตัวเอง เราแค่ควบคุมความกว้างก็พอ */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- โหลด Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/th_TH/sdk.js#xfbml=1&version=v19.0" nonce="XbA9eF5g"></script>
+
+    <div class="facebook-post-container">
+        <!-- 
+            คำแนะนำ:
+            1. นี่คือการฝังโพสต์โดยใช้ JavaScript SDK ของ Facebook เพื่อให้สามารถใช้ "ธีมมืด" ได้
+            2. หากต้องการเปลี่ยนโพสต์ ให้เปลี่ยนค่าใน data-href เป็น URL ของโพสต์ที่ต้องการ
+            3. คุณสามารถเปลี่ยน data-theme เป็น "light" หากต้องการกลับไปใช้ธีมสว่าง
+        -->
+        <div class="fb-post" 
+             data-href="https://www.facebook.com/permalink.php?story_fbid=pfbid02VuYLR2R5enFxPScUN2QCu3iC4NViuEqE61kv5KYHgACLyCd865uSUmR6ro5MjWTxl&id=100049469485567" 
+             data-width="500" 
+             data-show-text="true"
+             data-theme="dark">
+        </div>
+    </div>
+
+</body>
+</html>
